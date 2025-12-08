@@ -3,7 +3,7 @@
     <div
       class="flex lg:hidden bg-blue-200 z-50 h-full w-full items-center justify-between p-4"
     >
-      <Logo />
+      <NuxtLink to="/"><Logo /></NuxtLink>
       <Icon
         icon="iconamoon:menu-burger-horizontal-bold"
         class="z-50 cursor-pointer left-2 top-2"
@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-const open = ref(false);
+const open = useState("iconMenu", () => false);
 </script>
 
 <style lang="scss" scoped></style>

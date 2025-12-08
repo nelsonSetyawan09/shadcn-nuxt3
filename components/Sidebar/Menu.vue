@@ -1,26 +1,32 @@
 <template>
-  <div>
+  <div class="w-full">
     <header class="flex items-center gap-2 p-4 transition cursor-pointer">
-      <Logo />
+      <NuxtLink @click="handleNavigate('/')"><Logo /></NuxtLink>
       <p class="font-bold">Nuxt-Finance</p>
     </header>
     <div class="px-4 grow">
       <div class="grid gap-1">
-        <div
+        <NuxtLink
           v-for="(item, idx) in items"
           :key="idx"
+          @click="handleNavigate(item.path)"
           class="flex items-center gap-2 cursor-pointer hover:bg-neutral-200 px-3 py-2 rounded transition-all"
         >
           <Icon :icon="item.icon" />
 
           <span>{{ item.title }}</span>
-        </div>
+        </NuxtLink>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+const open = useState("iconMenu");
+const handleNavigate = (item) => {
+  navigateTo(item ?? "/");
+  open.value = false;
+};
 const items = ref([
   {
     title: "Overview",
