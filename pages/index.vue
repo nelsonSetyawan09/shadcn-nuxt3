@@ -18,25 +18,25 @@ const tabs = shallowRef([
   {
     title: "Today",
     value: "today",
-    component: resolveComponent("TabsToday"),
+    component: resolveComponent("TabsTodayChart"),
   },
   {
     title: "This Week",
     value: "week",
 
-    component: resolveComponent("TabsWeek"),
+    component: resolveComponent("TabsWeekChart"),
   },
   {
     title: "This Month",
     value: "month",
 
-    component: resolveComponent("TabsMonth"),
+    component: resolveComponent("TabsMonthChart"),
   },
   {
     title: "Year",
     value: "year",
 
-    component: resolveComponent("TabsYear"),
+    component: resolveComponent("TabsYearChart"),
   },
 ]);
 </script>
