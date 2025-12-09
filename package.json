@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@iconify/vue": "^5.0.0",
+    "@vueuse/core": "^14.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-vue-next": "^0.556.0",
     "nuxt": "^3.20.1",
+    "nuxt-charts": "^1.0.2",
     "reka-ui": "^2.6.1",
     "shadcn-nuxt": "^2.4.2",
     "tailwind-merge": "^3.4.0",

@@ -1,7 +1,10 @@
 <template>
   <div class="w-full">
-    <header class="flex items-center gap-2 p-4 transition cursor-pointer">
-      <NuxtLink @click="handleNavigate('/')"><Logo /></NuxtLink>
+    <header
+      class="flex items-center gap-2 p-4 transition cursor-pointer"
+      @click="handleNavigate('/')"
+    >
+      <Logo />
       <p class="font-bold">Nuxt-Finance</p>
     </header>
     <div class="px-4 grow">
