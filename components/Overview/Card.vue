@@ -29,7 +29,9 @@ const { title, description, content } = defineProps<Props>();
       <p>{{ content }}</p>
     </CardContent>
     <CardFooter>
-      <Button class="cursor-pointer"> Add Member </Button>
+      <Button class="cursor-pointer text-white bg-blue-700 hover:bg-blue-800">
+        Show Detail
+      </Button>
     </CardFooter>
   </Card>
 </template>
