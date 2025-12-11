@@ -1,5 +1,5 @@
 <template>
-  <div>account</div>
+  <div><AccountTable /></div>
 </template>
 
 <script setup></script>
