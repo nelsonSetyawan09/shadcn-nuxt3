@@ -1,5 +1,7 @@
 <template>
-  <div>transaction</div>
+  <div>
+    <TransactionsVirtualScroll />
+  </div>
 </template>
 
 <script setup></script>
