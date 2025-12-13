@@ -1,11 +1,11 @@
 // composables/useFormHandler.ts
 import { reactive, ref, computed, watch } from "vue";
 
-type Rule = (v: any) => string | null;
+type Rule<T = any> = (v: T) => string | null;
 
-export interface FieldSchema {
-  rules: Rule[];
-  default: any; // nilai awal sesuai tipe field
+export interface FieldSchema<T = any> {
+  rules: Rule<T>[];
+  default: T;
 }
 
 /**
@@ -15,72 +15,63 @@ export interface FieldSchema {
 export function useFormHandler<T extends Record<string, any>>(
   schema: Record<keyof T, FieldSchema>
 ) {
-  // Form dibuat dinamis → lebih aman memakai Record<string, any>
+  // --------------------------------------
+  // STATE
+  // --------------------------------------
   const form = reactive<Record<string, any>>({});
-
-  // Error per-field
   const errors = ref<Partial<Record<keyof T, string>>>({});
 
-  // Flags
   const isSaving = ref(false);
-  const isFormFresh = ref(true);
   const isResetting = ref(false);
 
+  // UX flags
+  const isFormFresh = ref(true); // sebelum ada interaksi
+  const hasSubmitted = ref(false); // setelah klik save
+
   // --------------------------------------
-  // 🟦 1. INISIALISASI FORM SESUAI SCHEMA
+  // INIT FORM FROM SCHEMA
   // --------------------------------------
   for (const key in schema) {
-    const k = key as string;
-    const field = schema[key];
-
-    // Set nilai default sesuai tipe field
-    form[k] = field.default;
+    form[key] = schema[key].default;
   }
 
   // --------------------------------------
-  // 🟨 2. VALIDASI SINGLE FIELD
+  // VALIDATE SINGLE FIELD
   // --------------------------------------
   const validateSingleField = (key: keyof T) => {
-    const k = key as string;
-    const value = form[k];
-    const fieldRules = schema[key].rules;
+    const value = form[key as string];
+    const rules = schema[key].rules;
 
-    for (const rule of fieldRules) {
-      const result = rule(value);
-      if (result) {
-        errors.value[key] = result;
+    for (const rule of rules) {
+      const error = rule(value);
+      if (error) {
+        errors.value[key] = error;
         return;
       }
     }
 
-    delete errors.value[key]; // Jika lolos semua rule
+    delete errors.value[key];
   };
 
   // --------------------------------------
-  // 🟧 3. VALIDATE FULL FORM
+  // VALIDATE FULL FORM
   // --------------------------------------
   const validateForm = () => {
     errors.value = {};
-    (Object.keys(schema) as Array<keyof T>).forEach((key) =>
-      validateSingleField(key)
-    );
+    (Object.keys(schema) as Array<keyof T>).forEach(validateSingleField);
   };
 
   // --------------------------------------
-  // 🟩 4. WATCH PER FIELD (REALTIME VALIDATION)
+  // WATCH PER FIELD (REALTIME VALIDATION)
   // --------------------------------------
   (Object.keys(schema) as Array<keyof T>).forEach((key) => {
-    const k = key as string;
-
     watch(
-      () => form[k],
+      () => form[key as string],
       () => {
-        if (isResetting.value) return; // jangan validasi saat reset
+        if (isResetting.value) return;
 
-        if (isFormFresh.value) {
-          isFormFresh.value = false;
-          return;
-        }
+        // ⛔ Skip hanya saat initial render & belum submit
+        if (isFormFresh.value && !hasSubmitted.value) return;
 
         validateSingleField(key);
       }
@@ -88,46 +79,49 @@ export function useFormHandler<T extends Record<string, any>>(
   });
 
   // --------------------------------------
-  // 🟪 5. STATUS VALID FORM
+  // FORM VALID STATUS
   // --------------------------------------
   const isFormValid = computed(() => {
     return Object.keys(errors.value).length === 0;
   });
 
   // --------------------------------------
-  // 🟥 6. RESET FORM KE DEFAULT
+  // RESET FORM
   // --------------------------------------
   const resetForm = () => {
     isResetting.value = true;
 
     for (const key in schema) {
-      const k = key as string;
-      form[k] = schema[key].default; // reset kembali ke default
+      form[key] = schema[key].default;
     }
 
     errors.value = {};
     isFormFresh.value = true;
+    hasSubmitted.value = false;
 
-    // izinkan watcher berjalan lagi setelah satu tick
-    setTimeout(() => (isResetting.value = false));
+    // allow watcher again
+    setTimeout(() => {
+      isResetting.value = false;
+    });
   };
 
   // --------------------------------------
-  // 🟫 7. SAVE HANDLER
+  // SAVE / SUBMIT HANDLER
   // --------------------------------------
   const saveForm = async (onSuccess?: (data: T) => void) => {
+    hasSubmitted.value = true;
+    isFormFresh.value = false;
+
     validateForm();
     if (!isFormValid.value) return;
 
     isSaving.value = true;
 
     try {
-      // simulasikan delay (API request)
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      // simulasi API request
+      await new Promise((r) => setTimeout(r, 800));
 
-      // callback dengan data sudah type-safe
       onSuccess?.({ ...(form as T) });
-
       resetForm();
     } finally {
       isSaving.value = false;
@@ -140,6 +134,7 @@ export function useFormHandler<T extends Record<string, any>>(
   return {
     form,
     errors,
+
     isSaving,
     isFormValid,
 

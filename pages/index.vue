@@ -1,15 +1,15 @@
 <template>
   <div>
-    <Tabs default-value="today">
-      <TabsList>
-        <TabsTrigger v-for="tab in tabs" :value="tab.value" :key="tab.value">
+    <SV-Tabs default-value="today">
+      <SV-TabsList>
+        <SV-TabsTrigger v-for="tab in tabs" :value="tab.value" :key="tab.value">
           {{ tab.title }}
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent v-for="content in tabs" :value="content.value">
+        </SV-TabsTrigger>
+      </SV-TabsList>
+      <SV-TabsContent v-for="content in tabs" :value="content.value">
         <component :is="content.component" />
-      </TabsContent>
-    </Tabs>
+      </SV-TabsContent>
+    </SV-Tabs>
   </div>
 </template>
 

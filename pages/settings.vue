@@ -4,9 +4,9 @@
     <form @submit.prevent="submit" class="space-y-4">
       <!-- USERNAME FIELD -->
       <div class="space-y-2">
-        <Label for="username">Username</Label>
+        <SV-Label for="username">Username</SV-Label>
 
-        <Input
+        <SV-Input
           id="username"
           v-model="form.username"
           type="text"
@@ -18,16 +18,18 @@
         </p>
       </div>
 
-      <!-- BUTTONS -->
+      <!-- SV-ButtonS -->
       <div class="flex justify-end gap-2 pt-3">
-        <!-- CLOSE BUTTON -->
-        <Button type="button" variant="outline" @click="close"> Close </Button>
+        <!-- CLOSE SV-Button -->
+        <SV-Button type="SV-Button" variant="outline" @click="close">
+          Close
+        </SV-Button>
 
-        <!-- SAVE BUTTON -->
-        <Button type="submit" :disabled="!isFormValid || isSaving">
+        <!-- SAVE SV-Button -->
+        <SV-Button type="submit" :disabled="!isFormValid || isSaving">
           <span v-if="isSaving">Saving...</span>
           <span v-else>Save</span>
-        </Button>
+        </SV-Button>
       </div>
     </form>
   </div>

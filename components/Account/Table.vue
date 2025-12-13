@@ -1,14 +1,4 @@
 <script setup lang="ts">
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
 const invoices = [
   {
     invoice: "INV001",
@@ -56,32 +46,32 @@ const invoices = [
 </script>
 
 <template>
-  <Table>
-    <TableHeader>
-      <TableRow>
-        <TableHead class="w-[100px]"> Invoice </TableHead>
-        <TableHead>Status</TableHead>
-        <TableHead>Method</TableHead>
-        <TableHead class="text-right"> Amount </TableHead>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      <TableRow v-for="invoice in invoices" :key="invoice.invoice">
-        <TableCell class="font-medium">
+  <SV-Table>
+    <SV-TableHeader>
+      <SV-TableRow>
+        <SV-TableHead class="w-[100px]"> Invoice </SV-TableHead>
+        <SV-TableHead>Status</SV-TableHead>
+        <SV-TableHead>Method</SV-TableHead>
+        <SV-TableHead class="text-right"> Amount </SV-TableHead>
+      </SV-TableRow>
+    </SV-TableHeader>
+    <SV-TableBody>
+      <SV-TableRow v-for="invoice in invoices" :key="invoice.invoice">
+        <SV-TableCell class="font-medium">
           {{ invoice.invoice }}
-        </TableCell>
-        <TableCell>{{ invoice.paymentStatus }}</TableCell>
-        <TableCell>{{ invoice.paymentMethod }}</TableCell>
-        <TableCell class="text-right">
+        </SV-TableCell>
+        <SV-TableCell>{{ invoice.paymentStatus }}</SV-TableCell>
+        <SV-TableCell>{{ invoice.paymentMethod }}</SV-TableCell>
+        <SV-TableCell class="text-right">
           {{ invoice.totalAmount }}
-        </TableCell>
-      </TableRow>
-    </TableBody>
-    <TableFooter>
-      <TableRow>
-        <TableCell colspan="3"> Total </TableCell>
-        <TableCell class="text-right"> $2,500.00 </TableCell>
-      </TableRow>
-    </TableFooter>
-  </Table>
+        </SV-TableCell>
+      </SV-TableRow>
+    </SV-TableBody>
+    <SV-TableFooter>
+      <SV-TableRow>
+        <SV-TableCell colspan="3"> Total </SV-TableCell>
+        <SV-TableCell class="text-right"> $2,500.00 </SV-TableCell>
+      </SV-TableRow>
+    </SV-TableFooter>
+  </SV-Table>
 </template>

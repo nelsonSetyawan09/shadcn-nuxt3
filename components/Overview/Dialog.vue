@@ -1,16 +1,4 @@
 <script setup lang="ts">
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/vue";
 const emit = defineEmits(["handleAddMember"]);
 const isOpen = ref(false);
@@ -25,20 +13,20 @@ const handleAddMember = () => {
 </script>
 
 <template>
-  <Dialog :open="isOpen">
-    <DialogTrigger as-child>
-      <Button
+  <SV-Dialog :open="isOpen">
+    <SV-DialogTrigger as-child>
+      <SV-Button
         class="bg-blue-700 hover:bg-blue-900 cursor-pointer"
         @click="isOpen = true"
       >
         Add Member
-      </Button>
-    </DialogTrigger>
+      </SV-Button>
+    </SV-DialogTrigger>
 
-    <DialogContent :showCloseButton="false">
+    <SV-DialogContent :showCloseSV-Button="false">
       <form @submit.prevent="handleAddMember">
-        <DialogClose as-child class="">
-          <Button
+        <SV-DialogClose as-child class="">
+          <SV-Button
             size="icon"
             aria-label="Submit"
             class="absolute top-3 right-3 p-1 bg-transparent hover:bg-transparent cursor-pointer"
@@ -48,40 +36,44 @@ const handleAddMember = () => {
               icon="mdi:close"
               class="w-5 h-5 text-neutral-700 hover:scale-[120%]"
             />
-          </Button>
-        </DialogClose>
+          </SV-Button>
+        </SV-DialogClose>
 
-        <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
-          <DialogDescription>
+        <SV-DialogHeader>
+          <SV-DialogTitle>Are you absolutely sure?</SV-DialogTitle>
+          <SV-DialogDescription>
             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quia dolor
             doloribus commodi aliquid ullam sit corporis id sapiente ipsa
             facere. Veniam ratione voluptates iure aliquam omnis dolorum
             sapiente excepturi officia.
-          </DialogDescription>
-        </DialogHeader>
+          </SV-DialogDescription>
+        </SV-DialogHeader>
 
         <div class="mt-4">
-          <Input
+          <SV-Input
             type="text"
             placeholder="Username"
             v-model="userName"
             class="border rounded pl-3 min-h-10"
           />
         </div>
-        <DialogFooter class="mt-7">
-          <Button variant="outline" @click="closeDialog" class="cursor-pointer">
+        <SV-DialogFooter class="mt-7">
+          <SV-Button
+            variant="outline"
+            @click="closeDialog"
+            class="cursor-pointer"
+          >
             Close
-          </Button>
-          <Button
+          </SV-Button>
+          <SV-Button
             type="submit"
             :disabled="userName?.trim()?.length < 1"
             class="bg-blue-700 hover:bg-blue-900 cursor-pointer disabled:cursor-not-allowed"
           >
             Add Member
-          </Button>
-        </DialogFooter>
+          </SV-Button>
+        </SV-DialogFooter>
       </form>
-    </DialogContent>
-  </Dialog>
+    </SV-DialogContent>
+  </SV-Dialog>
 </template>
