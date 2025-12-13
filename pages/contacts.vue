@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useFormHandler } from "@/composables/useFormHandler";
 
 const ready = ref(false);
@@ -36,8 +32,8 @@ const close = () => {
     <form @submit.prevent="submit" class="space-y-5">
       <!-- NAME -->
       <div class="space-y-2">
-        <Label for="name">Nama</Label>
-        <Input
+        <SV-Label for="name">Nama</SV-Label>
+        <SV-Input
           id="name"
           v-model="form.name"
           type="text"
@@ -48,8 +44,8 @@ const close = () => {
 
       <!-- AGE -->
       <div class="space-y-2">
-        <Label for="age">Umur</Label>
-        <Input
+        <SV-Label for="age">Umur</SV-Label>
+        <SV-Input
           id="age"
           v-model="form.age"
           type="number"
@@ -60,10 +56,10 @@ const close = () => {
 
       <!-- AGREE -->
       <div class="space-y-2">
-        <Label class="flex items-center gap-2 cursor-pointer">
-          <Checkbox v-model:checked="form.agree" />
+        <SV-Label class="flex items-center gap-2 cursor-pointer">
+          <SV-Checkbox v-model="form.agree" />
           Saya bersedia
-        </Label>
+        </SV-Label>
         <p v-if="errors.agree" class="text-sm text-red-500">
           {{ errors.agree }}
         </p>
@@ -72,13 +68,15 @@ const close = () => {
       <!-- BUTTONS -->
       <div class="flex justify-end gap-2 pt-4">
         <!-- CLOSE BUTTON -->
-        <Button variant="outline" type="button" @click="close"> Close </Button>
+        <SV-Button variant="outline" type="button" @click="close">
+          Close
+        </SV-Button>
 
         <!-- SAVE BUTTON -->
-        <Button type="submit" :disabled="!isFormValid || isSaving">
+        <SV-Button type="submit" :disabled="!isFormValid || isSaving">
           <span v-if="isSaving">Saving...</span>
           <span v-else>Save</span>
-        </Button>
+        </SV-Button>
       </div>
     </form>
   </div>

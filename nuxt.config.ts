@@ -3,13 +3,14 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
+  components: true, // ⬅️ WAJIB untuk auto-import component
   modules: ["@nuxtjs/tailwindcss", "shadcn-nuxt", "nuxt-charts"],
   shadcn: {
     /**
      * Prefix for all the imported component.
      * @default "Ui"
      */
-    prefix: "",
+    prefix: "SV-",
     /**
      * Directory that the component lives in.
      * Will respect the Nuxt aliases.
