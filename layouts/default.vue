@@ -4,7 +4,7 @@
       <Sidebar />
     </div>
     <main class="flex-1 flex justify-center">
-      <div class="w-full max-w-7xl">
+      <div class="w-full max-w-[1320px]">
         <div class="flex items-center mb-5 justify-between bg-neutral-50 p-4">
           <h1 class="text-3xl font-semibold capitalize">
             {{ firstPath === "" ? "Home" : firstPath }}
