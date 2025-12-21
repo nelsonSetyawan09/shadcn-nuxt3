@@ -30,6 +30,40 @@
         </p>
       </div>
 
+      <!-- EMAIL -->
+      <div class="space-y-2">
+        <SV-Label for="email">Email</SV-Label>
+        <SV-Input
+          id="email"
+          v-model="form.email"
+          type="email"
+          :class="errors.email ? 'border-red-500' : ''"
+        />
+        <p v-if="errors.email" class="text-sm text-red-500">
+          {{ errors.email }}
+        </p>
+      </div>
+
+      <!-- PHONE -->
+      <div class="space-y-2">
+        <SV-Label for="phone"
+          >Phone
+          <span class="text-sm opacity-50">(ex: 085399726089)</span></SV-Label
+        >
+        <SV-Input
+          id="phone"
+          v-model="form.phone"
+          type="text"
+          inputmode="numeric"
+          placeholder="08xxxxxxxxxx"
+          @input="onPhoneInput"
+          :class="errors.phone ? 'border-red-500' : ''"
+        />
+        <p v-if="errors.phone" class="text-sm text-red-500">
+          {{ errors.phone }}
+        </p>
+      </div>
+
       <!-- AGREE -->
       <div class="space-y-2">
         <SV-Label class="flex items-center gap-2 cursor-pointer">
@@ -60,18 +94,43 @@
 
 <script setup lang="ts">
 import { useFormHandler } from "@/composables/useFormHandler";
+import { usePhone } from "@/composables/usePhone";
+
+const { validate: phoneRule } = usePhone();
 
 const ready = ref(false);
 
 const { form, errors, isSaving, isFormValid, saveForm } = useFormHandler<{
   name: string;
   age: number;
+  email: string;
+  phone: string;
   agree: boolean;
 }>({
   name: { rules: [(v) => (v ? null : "Nama wajib diisi")], default: "" },
   age: { rules: [(v) => (v >= 18 ? null : "Minimal 18 tahun")], default: 0 },
+  email: {
+    rules: [
+      (v) => (v ? null : "Nama wajib diisi"),
+      (v) =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)
+          ? null
+          : "Format email tidak valid",
+    ],
+    default: "",
+  },
+  phone: {
+    rules: [phoneRule],
+    default: "",
+  },
   agree: { rules: [(v) => (v ? null : "Wajib setuju")], default: false },
 });
+
+const onPhoneInput = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  target.value = target.value.replace(/\D/g, "");
+  form.phone = target.value;
+};
 
 onMounted(() => {
   ready.value = true;

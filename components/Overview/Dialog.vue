@@ -3,6 +3,7 @@ import { Icon } from "@iconify/vue";
 const emit = defineEmits(["handleAddMember"]);
 const isOpen = ref(false);
 const userName = ref("");
+
 const closeDialog = () => (isOpen.value = false);
 const handleAddMember = () => {
   if (userName.value?.trim()?.length < 1) return;
@@ -23,7 +24,7 @@ const handleAddMember = () => {
       </SV-Button>
     </SV-DialogTrigger>
 
-    <SV-DialogContent :showCloseSV-Button="false">
+    <SV-DialogContent :showCloseButton="false">
       <form @submit.prevent="handleAddMember">
         <SV-DialogClose as-child class="">
           <SV-Button

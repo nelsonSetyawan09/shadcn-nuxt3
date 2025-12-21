@@ -21,7 +21,7 @@
       <!-- SV-ButtonS -->
       <div class="flex justify-end gap-2 pt-3">
         <!-- CLOSE SV-Button -->
-        <SV-Button type="SV-Button" variant="outline" @click="close">
+        <SV-Button type="button" variant="outline" @click="close">
           Close
         </SV-Button>
 
@@ -36,7 +36,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
 import { useFormHandler } from "@/composables/useFormHandler";
 
 const ready = ref(false);
