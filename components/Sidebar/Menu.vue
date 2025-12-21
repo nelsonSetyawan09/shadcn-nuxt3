@@ -56,6 +56,11 @@ const items = ref([
     path: "/settings",
     icon: "material-symbols:settings-rounded",
   },
+  {
+    title: "Users",
+    path: "/users",
+    icon: "material-symbols:settings-rounded",
+  },
 ]);
 </script>
 
