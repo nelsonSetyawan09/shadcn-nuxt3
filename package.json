@@ -15,7 +15,7 @@
     "@vueuse/core": "^14.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-vue-next": "^0.556.0",
+    "lucide-vue-next": "^0.561.0",
     "nuxt": "^3.20.1",
     "nuxt-charts": "^1.0.2",
     "reka-ui": "^2.6.1",

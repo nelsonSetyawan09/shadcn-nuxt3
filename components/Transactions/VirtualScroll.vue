@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-
 const items = ref<any[]>([]);
 
 // simulasi data ribuan yang sudah dimuat semuanya di awal
