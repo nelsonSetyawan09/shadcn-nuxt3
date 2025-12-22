@@ -4,10 +4,11 @@ import { useRoute, useRouter } from "#imports";
 import type { ColumnDef, SortingState } from "@tanstack/vue-table";
 import { useTanstackTable } from "@/composables/useTanStackTable";
 import { BaseTable, TablePaginationNumber } from "@/components/features/table";
+import UserNameWithPopover from "./UserNameWithPopover.vue";
 
 interface User {
   id: number;
-  name: string;
+  userName: string;
   email: string;
 }
 
@@ -51,10 +52,18 @@ const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
  * ===================== */
 const columns: ColumnDef<User>[] = [
   { accessorKey: "id", header: "ID" },
-  { accessorKey: "name", header: "Name" },
+  {
+    accessorKey: "userName",
+    header: "Name",
+    cell: ({ row }) =>
+      h(UserNameWithPopover, {
+        id: row.original.id,
+        userName: row.original.userName, // ⬅️ pakai nama prop baru
+        email: row.original.email,
+      }),
+  },
   { accessorKey: "email", header: "Email" },
 ];
-
 /* =====================
  * SORTING
  * ===================== */

@@ -59,7 +59,7 @@ const items = ref([
   {
     title: "Users",
     path: "/users",
-    icon: "material-symbols:settings-rounded",
+    icon: "majesticons:users",
   },
 ]);
 </script>
