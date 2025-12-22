@@ -15,18 +15,27 @@ defineProps<{ table: Table<any> }>();
             v-for="header in table.getFlatHeaders()"
             :key="header.id"
             class="px-4 py-3 text-left font-semibold select-none"
+            :class="{
+              'w-[32px] px-2 text-center': header.column.id === 'select',
+            }"
           >
             <div
               v-if="!header.isPlaceholder"
               class="flex items-center gap-1 cursor-pointer"
-              @click="header.column.toggleSorting()"
+              :class="{
+                'cursor-pointer': header.column.getCanSort(),
+                'cursor-default': !header.column.getCanSort(),
+              }"
+              @click="
+                header.column.getCanSort() && header.column.toggleSorting()
+              "
             >
               <FlexRender
                 :render="header.column.columnDef.header"
                 :props="header.getContext()"
               />
 
-              <span class="text-xs">
+              <span v-if="header.column.getCanSort()" class="text-xs">
                 <template v-if="header.column.getIsSorted() === 'asc'"
                   >▲</template
                 >
@@ -50,6 +59,9 @@ defineProps<{ table: Table<any> }>();
             v-for="cell in row.getVisibleCells()"
             :key="cell.id"
             class="px-4 py-3"
+            :class="{
+              'w-[32px] px-2 text-center': cell.column.id === 'select',
+            }"
           >
             <FlexRender
               :render="cell.column.columnDef.cell"

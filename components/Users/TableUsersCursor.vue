@@ -1,7 +1,12 @@
+<!-- components/Users/TableUsersCursor.vue -->
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "#imports";
-import type { ColumnDef, SortingState } from "@tanstack/vue-table";
+import type {
+  ColumnDef,
+  SortingState,
+  RowSelectionState,
+} from "@tanstack/vue-table";
 import { useTanstackTable } from "@/composables/useTanStackTable";
 import { BaseTable, TablePaging } from "@/components/features/table";
 import UserNameWithTooltip from "./UserNameWithTooltip.vue";
@@ -24,6 +29,7 @@ const router = useRouter();
 const rows = ref<User[]>([]);
 const sorting = ref<SortingState>([]);
 const loading = ref(false);
+const rowSelection = ref({});
 
 const nextCursor = ref<number | null>(null);
 const prevCursor = ref<number | null>(null);
@@ -49,6 +55,27 @@ const cursor = computed<number>({
  * COLUMNS
  * ===================== */
 const columns: ColumnDef<User>[] = [
+  {
+    id: "select",
+    header: ({ table }) =>
+      h("input", {
+        type: "checkbox",
+        class: "cursor-pointer",
+        checked: table.getIsAllPageRowsSelected(),
+        indeterminate: table.getIsSomePageRowsSelected(),
+        onChange: table.getToggleAllPageRowsSelectedHandler(),
+      }),
+    cell: ({ row }) =>
+      h("input", {
+        type: "checkbox",
+        class: "cursor-pointer",
+        checked: row.getIsSelected(),
+        disabled: !row.getCanSelect(),
+        onChange: row.getToggleSelectedHandler(),
+      }),
+    enableSorting: false,
+    size: 32,
+  },
   { accessorKey: "id", header: "ID" },
   {
     accessorKey: "userName",
@@ -62,6 +89,10 @@ const columns: ColumnDef<User>[] = [
   },
   { accessorKey: "email", header: "Email" },
 ];
+
+const selectedRows = computed(() => {
+  return table.getSelectedRowModel().rows.map((row) => row.original);
+});
 
 /* =====================
  * SORTING
@@ -81,8 +112,15 @@ function onSortingChange(
 const table = useTanstackTable<User>({
   data: rows,
   columns,
+
   sorting,
   onSortingChange,
+
+  rowSelection,
+  onRowSelectionChange: (updater) => {
+    rowSelection.value =
+      typeof updater === "function" ? updater(rowSelection.value) : updater;
+  },
 });
 
 /* =====================
@@ -109,8 +147,12 @@ async function fetchData() {
   loading.value = false;
 }
 
-watch(() => [cursor.value, sorting.value], fetchData, {
-  immediate: true,
+// 1. Fetch data
+watch(() => [cursor.value, sorting.value], fetchData, { immediate: true });
+
+// 2. Reset selection
+watch([cursor, sorting], () => {
+  rowSelection.value = {};
 });
 
 /* =====================
