@@ -4,10 +4,11 @@ import { useRoute, useRouter } from "#imports";
 import type { ColumnDef, SortingState } from "@tanstack/vue-table";
 import { useTanstackTable } from "@/composables/useTanStackTable";
 import { BaseTable, TablePaging } from "@/components/features/table";
+import UserNameWithTooltip from "./UserNameWithTooltip.vue";
 
 interface User {
   id: number;
-  name: string;
+  userName: string;
   email: string;
 }
 
@@ -49,7 +50,16 @@ const cursor = computed<number>({
  * ===================== */
 const columns: ColumnDef<User>[] = [
   { accessorKey: "id", header: "ID" },
-  { accessorKey: "name", header: "Name" },
+  {
+    accessorKey: "userName",
+    header: "Name",
+    cell: ({ row }) =>
+      h(UserNameWithTooltip, {
+        id: row.original.id,
+        userName: row.original.userName, // ⬅️ pakai nama prop baru
+        email: row.original.email,
+      }),
+  },
   { accessorKey: "email", header: "Email" },
 ];
 
