@@ -2,20 +2,14 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "#imports";
-import type {
-  ColumnDef,
-  SortingState,
-  RowSelectionState,
-} from "@tanstack/vue-table";
+import type { ColumnDef, SortingState } from "@tanstack/vue-table";
 import { useTanstackTable } from "@/composables/useTanStackTable";
 import { BaseTable, TablePaging } from "@/components/features/table";
 import UserNameWithTooltip from "./UserNameWithTooltip.vue";
-
-interface User {
-  id: number;
-  userName: string;
-  email: string;
-}
+import EditUserDialog from "./EditUserDialog.vue";
+import { Pencil } from "lucide-vue-next";
+import { Button } from "@/components/ui/button";
+import type { User } from "@/types/user";
 
 /* =====================
  * ROUTER
@@ -30,6 +24,9 @@ const rows = ref<User[]>([]);
 const sorting = ref<SortingState>([]);
 const loading = ref(false);
 const rowSelection = ref({});
+
+const userDataEdit = ref<User | null>(null);
+const isEditOpen = ref(false);
 
 const nextCursor = ref<number | null>(null);
 const prevCursor = ref<number | null>(null);
@@ -88,6 +85,24 @@ const columns: ColumnDef<User>[] = [
       }),
   },
   { accessorKey: "email", header: "Email" },
+  {
+    id: "actions",
+    header: "Edit",
+    enableSorting: false,
+    size: 64,
+    cell: ({ row }) =>
+      h(
+        Button,
+        {
+          size: "sm",
+          class: "rounded-sm",
+          onClick: () => editUser(row.original),
+        },
+        {
+          default: () => [h(Pencil, { size: 14 }), "Edit"],
+        }
+      ),
+  },
 ];
 
 const selectedRows = computed(() => {
@@ -104,6 +119,17 @@ function onSortingChange(
     typeof updater === "function" ? updater(sorting.value) : updater;
 
   cursor.value = 0;
+}
+
+function editUser(user: User) {
+  userDataEdit.value = { ...user };
+  isEditOpen.value = true;
+}
+
+function handleEditUser(data: User) {
+  rows.value = rows.value.map((row) => (row.id === data.id ? data : row));
+  isEditOpen.value = false;
+  userDataEdit.value = null;
 }
 
 /* =====================
@@ -168,13 +194,22 @@ function prev() {
 </script>
 
 <template>
-  <BaseTable :table="table" />
+  <div>
+    <BaseTable :table="table" />
 
-  <TablePaging
-    :has-prev="prevCursor !== null"
-    :has-next="nextCursor !== null"
-    :loading="loading"
-    @prev="prev"
-    @next="next"
-  />
+    <TablePaging
+      :has-prev="prevCursor !== null"
+      :has-next="nextCursor !== null"
+      :loading="loading"
+      @prev="prev"
+      @next="next"
+    />
+
+    <EditUserDialog
+      :user-data="userDataEdit"
+      :is-edit-open="isEditOpen"
+      @update:open="isEditOpen = $event"
+      @handle-edit-user="handleEditUser"
+    />
+  </div>
 </template>

@@ -108,7 +108,10 @@ export function useFormHandler<T extends Record<string, any>>(
   // --------------------------------------
   // SAVE / SUBMIT HANDLER
   // --------------------------------------
-  const saveForm = async (onSuccess?: (data: T) => void) => {
+  const saveForm = async (
+    onSuccess?: (data: T) => void,
+    options?: { mock?: boolean }
+  ) => {
     hasSubmitted.value = true;
     isFormFresh.value = false;
 
@@ -119,7 +122,9 @@ export function useFormHandler<T extends Record<string, any>>(
 
     try {
       // simulasi API request
-      await new Promise((r) => setTimeout(r, 800));
+      if (options?.mock !== true) {
+        await new Promise((r) => setTimeout(r, 800)); // hanya untuk create / demo
+      }
 
       onSuccess?.({ ...(form as T) });
       resetForm();
