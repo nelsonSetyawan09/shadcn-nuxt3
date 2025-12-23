@@ -17,6 +17,7 @@ defineProps<{ table: Table<any> }>();
             class="px-4 py-3 text-left font-semibold select-none"
             :class="{
               'w-[32px] px-2 text-center': header.column.id === 'select',
+              'w-[100px] text-center': header.column.id === 'actions',
             }"
           >
             <div
@@ -61,6 +62,7 @@ defineProps<{ table: Table<any> }>();
             class="px-4 py-3"
             :class="{
               'w-[32px] px-2 text-center': cell.column.id === 'select',
+              'w-[100px] text-center': cell.column.id === 'actions',
             }"
           >
             <FlexRender
