@@ -1,11 +1,10 @@
+<!-- pages/users.vue -->
 <template>
   <div>
-    <TableUsersCursor />
+    <UsersTableUsersCursor />
   </div>
 </template>
 
-<script setup lang="ts">
-import TableUsersCursor from "~/components/Users/TableUsersCursor.vue";
-</script>
+<script setup lang="ts"></script>
 
 <style scoped></style>
