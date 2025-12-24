@@ -58,6 +58,5 @@ export function useTanstackTable<T>({
 
     /* ================= MODELS ================= */
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
   });
 }

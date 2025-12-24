@@ -1,20 +1,55 @@
 // server/uapi/users/TextCursor.get.ts
 import { USERS } from "@/utils/mockUsers";
-
-const PAGE_SIZE = 10;
+import { getQuery } from "h3";
 
 export default defineEventHandler((event) => {
-  const { cursor = 0 } = getQuery(event);
+  const query = getQuery(event);
 
-  const start = Number(cursor);
-  const end = start + PAGE_SIZE;
+  /* =====================
+   * QUERY PARAMS
+   * ===================== */
+  const cursor = Number(query.cursor ?? 0);
+  const limit = Number(query.limit ?? 10);
 
+  const sortParam = query.sort as string | undefined;
+  /* =====================
+   * SORTING (SERVER SIDE)
+   * ===================== */
+  let dataSource = [...USERS];
+
+  if (sortParam) {
+    const [field, dir] = sortParam.split(":");
+
+    dataSource.sort((a: any, b: any) => {
+      if (a[field] < b[field]) return dir === "desc" ? 1 : -1;
+      if (a[field] > b[field]) return dir === "desc" ? -1 : 1;
+      return 0;
+    });
+  }
+
+  /* =====================
+   * CURSOR PAGINATION
+   * ===================== */
+  const start = cursor;
+  const end = start + limit;
+
+  // ambil +1 untuk cek next page
+  const slice = dataSource.slice(start, end + 1);
+
+  const hasNext = slice.length > limit;
+
+  const data = hasNext ? slice.slice(0, limit) : slice;
+
+  const nextCursor = hasNext ? end : null;
+  const prevCursor = start > 0 ? Math.max(0, start - limit) : null;
+
+  /* =====================
+   * RESPONSE
+   * ===================== */
   return {
-    data: USERS.slice(start, end),
-
-    nextCursor: end < USERS.length ? end : null,
-    prevCursor: start > 0 ? Math.max(0, start - PAGE_SIZE) : null,
-
-    pageSize: PAGE_SIZE,
+    data,
+    nextCursor,
+    prevCursor,
+    totalItems: dataSource.length,
   };
 });
