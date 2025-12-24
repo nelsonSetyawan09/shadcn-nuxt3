@@ -1,3 +1,4 @@
+<!-- Sidebar/SidebarMenu.vue -->
 <template>
   <div class="w-full">
     <header
@@ -30,7 +31,7 @@ const handleNavigate = (item) => {
   navigateTo(item ?? "/");
   open.value = false;
 };
-const items = ref([
+const items = [
   {
     title: "Overview",
     path: "/overview",
@@ -61,7 +62,7 @@ const items = ref([
     path: "/users",
     icon: "majesticons:users",
   },
-]);
+];
 </script>
 
 <style lang="scss" scoped></style>

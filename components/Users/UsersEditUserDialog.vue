@@ -1,6 +1,6 @@
 <!-- components/Users/EditUserModal -->
 <script setup lang="ts">
-import EditUserForm from "./EditUserForm.vue";
+import EditUserForm from "./UsersEditUserForm.vue";
 import type { User } from "@/types/user";
 
 const props = defineProps<{

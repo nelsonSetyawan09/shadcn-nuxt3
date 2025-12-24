@@ -4,7 +4,7 @@ import { useRoute, useRouter } from "#imports";
 import type { ColumnDef, SortingState } from "@tanstack/vue-table";
 import { useTanstackTable } from "@/composables/useTanStackTable";
 import { BaseTable, TablePaginationNumber } from "@/components/features/table";
-import UserNameWithPopover from "./UserNameWithPopover.vue";
+import UserNameWithPopover from "./UsersWithUserNamePopover.vue";
 
 interface User {
   id: number;

@@ -1,3 +1,4 @@
+<!-- Sidebar/Sidebar.vue -->
 <template>
   <div>
     <div

@@ -4,9 +4,7 @@ import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "#imports";
 import type { ColumnDef, SortingState } from "@tanstack/vue-table";
 import { useTanstackTable } from "@/composables/useTanStackTable";
-import { BaseTable, TablePaging } from "@/components/features/table";
-import UserNameWithTooltip from "./UserNameWithTooltip.vue";
-import EditUserDialog from "./EditUserDialog.vue";
+import UserNameWithTooltip from "./UsersWithUserNameTooltip.vue";
 import TableImage from "../features/table/TableImage.vue";
 import { Pencil } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
@@ -207,7 +205,7 @@ function prev() {
 
 <template>
   <div>
-    <BaseTable :table="table">
+    <TableBaseTable :table="table">
       <template #header>
         <div>
           <div>
@@ -217,7 +215,7 @@ function prev() {
         </div>
       </template>
       <template #footer> In total there are {{ rows.length }} users. </template>
-    </BaseTable>
+    </TableBaseTable>
 
     <TablePaging
       :has-prev="prevCursor !== null"
@@ -227,7 +225,7 @@ function prev() {
       @next="next"
     />
 
-    <EditUserDialog
+    <UsersEditUserDialog
       :user-data="userDataEdit"
       :is-edit-open="isEditOpen"
       @update:open="isEditOpen = $event"
