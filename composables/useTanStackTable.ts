@@ -19,8 +19,8 @@ export interface UseTanstackTableOptions<T> {
   onSortingChange: OnChangeFn<SortingState>;
 
   /* row selection */
-  rowSelection: Ref<RowSelectionState>;
-  onRowSelectionChange: OnChangeFn<RowSelectionState>;
+  rowSelection?: Ref<RowSelectionState>;
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>;
 }
 
 export function useTanstackTable<T>({
@@ -44,7 +44,7 @@ export function useTanstackTable<T>({
         return sorting.value;
       },
       get rowSelection() {
-        return rowSelection.value;
+        return rowSelection?.value;
       },
     },
 

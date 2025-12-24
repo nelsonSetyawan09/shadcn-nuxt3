@@ -7,6 +7,7 @@ import { useTanstackTable } from "@/composables/useTanStackTable";
 import { BaseTable, TablePaging } from "@/components/features/table";
 import UserNameWithTooltip from "./UserNameWithTooltip.vue";
 import EditUserDialog from "./EditUserDialog.vue";
+import TableImage from "../features/table/TableImage.vue";
 import { Pencil } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import type { User } from "@/types/user";
@@ -74,6 +75,17 @@ const columns: ColumnDef<User>[] = [
     size: 32,
   },
   { accessorKey: "id", header: "ID" },
+  {
+    accessorKey: "img",
+    header: "Image",
+    enableSorting: false,
+    size: 72,
+    cell: ({ row }) =>
+      h(TableImage, {
+        src: row.original.img,
+        alt: row.original.userName,
+      }),
+  },
   {
     accessorKey: "userName",
     header: "Name",
@@ -195,7 +207,17 @@ function prev() {
 
 <template>
   <div>
-    <BaseTable :table="table" />
+    <BaseTable :table="table">
+      <template #header>
+        <div>
+          <div>
+            <h2 class="text-lg font-semibold">Users</h2>
+            <p class="text-sm text-gray-500">Manage users and permissions</p>
+          </div>
+        </div>
+      </template>
+      <template #footer> In total there are {{ rows.length }} users. </template>
+    </BaseTable>
 
     <TablePaging
       :has-prev="prevCursor !== null"
