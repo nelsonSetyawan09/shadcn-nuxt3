@@ -1,3 +1,4 @@
+<!-- components/features/table/TableBaseGridTable -->
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import type { Table } from "@tanstack/vue-table";
@@ -6,23 +7,24 @@ import { computeGridColumns } from "@/utils/computeGridColumns";
 
 const props = defineProps<{ table: Table<any> }>();
 
-/* ================= WIDTH OBSERVER ================= */
+/* ================= WIDTH OBSERVER (ResizeObserver) ================= */
 const wrapperRef = ref<HTMLDivElement | null>(null);
 const containerWidth = ref(0);
 
-function updateWidth() {
-  if (wrapperRef.value) {
-    containerWidth.value = wrapperRef.value.clientWidth;
-  }
-}
+let resizeObserver: ResizeObserver | null = null;
 
 onMounted(() => {
-  updateWidth();
-  window.addEventListener("resize", updateWidth);
-});
+  if (!wrapperRef.value) return;
 
-onBeforeUnmount(() => {
-  window.removeEventListener("resize", updateWidth);
+  resizeObserver = new ResizeObserver(([entry]) => {
+    const width = Math.floor(entry.contentRect.width);
+
+    if (width !== containerWidth.value) {
+      containerWidth.value = width;
+    }
+  });
+
+  resizeObserver.observe(wrapperRef.value);
 });
 
 /* ================= GRID TEMPLATE ================= */
@@ -43,11 +45,14 @@ const gridTemplateColumns = computed(() => {
     <!-- GRID TABLE -->
     <div ref="wrapperRef" class="relative overflow-x-auto">
       <!-- THEAD -->
-      <div class="grid" :style="{ gridTemplateColumns }">
+      <div class="grid sticky top-0 z-10" :style="{ gridTemplateColumns }">
         <div
           v-for="header in table.getFlatHeaders()"
           :key="header.id"
           class="px-4 py-3 font-semibold bg-gray-100 border-b border-gray-300 border-r last:border-r-0"
+          :class="{
+            'cursor-pointer select-none': header.column.getCanSort(),
+          }"
           @click="header.column.getCanSort() && header.column.toggleSorting()"
         >
           <FlexRender
@@ -64,6 +69,7 @@ const gridTemplateColumns = computed(() => {
           </span>
         </div>
       </div>
+
       <!-- TBODY -->
       <div
         v-for="row in table.getRowModel().rows"
