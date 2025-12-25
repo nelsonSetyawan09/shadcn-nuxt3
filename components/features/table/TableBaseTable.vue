@@ -13,21 +13,21 @@ defineProps<{ table: Table<any> }>();
       <slot name="header" />
     </div>
     <div class="overflow-x-auto border rounded">
-      <table class="w-full border-collapse text-sm">
+      <table
+        class="border-collapse text-sm table-fixed"
+        :style="{ minWidth: table.getTotalSize() + 'px' }"
+      >
         <thead class="bg-gray-50">
           <tr>
             <th
               v-for="header in table.getFlatHeaders()"
               :key="header.id"
-              class="px-4 py-3 text-left font-semibold select-none"
-              :class="{
-                'w-[32px] px-2 text-center': header.column.id === 'select',
-                'w-[100px] text-center': header.column.id === 'actions',
-              }"
+              class="px-4 py-3 text-left font-semibold select-none overflow-hidden whitespace-nowrap"
+              :style="{ minWidth: header.getSize() + 'px' }"
             >
               <div
                 v-if="!header.isPlaceholder"
-                class="flex items-center gap-1 cursor-pointer"
+                class="flex items-center gap-2 cursor-pointer"
                 :class="{
                   'cursor-pointer': header.column.getCanSort(),
                   'cursor-default': !header.column.getCanSort(),
@@ -41,7 +41,7 @@ defineProps<{ table: Table<any> }>();
                   :props="header.getContext()"
                 />
 
-                <span v-if="header.column.getCanSort()" class="text-xs">
+                <div v-if="header.column.getCanSort()" class="text-xs ml-2">
                   <template v-if="header.column.getIsSorted() === 'asc'"
                     >▲</template
                   >
@@ -49,7 +49,7 @@ defineProps<{ table: Table<any> }>();
                     >▼</template
                   >
                   <template v-else>⇅</template>
-                </span>
+                </div>
               </div>
             </th>
           </tr>
@@ -64,16 +64,15 @@ defineProps<{ table: Table<any> }>();
             <td
               v-for="cell in row.getVisibleCells()"
               :key="cell.id"
-              class="px-4 py-3"
-              :class="{
-                'w-[32px] px-2 text-center': cell.column.id === 'select',
-                'w-[100px] text-center': cell.column.id === 'actions',
-              }"
+              class="px-4 py-3 overflow-hidden whitespace-nowrap"
+              :style="{ minWidth: cell.column.getSize() + 'px' }"
             >
-              <FlexRender
-                :render="cell.column.columnDef.cell"
-                :props="cell.getContext()"
-              />
+              <div class="wrap-break-words whitespace-normal">
+                <FlexRender
+                  :render="cell.column.columnDef.cell"
+                  :props="cell.getContext()"
+                />
+              </div>
             </td>
           </tr>
         </tbody>

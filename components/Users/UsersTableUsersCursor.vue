@@ -96,14 +96,14 @@ const columns: ColumnDef<User>[] = [
         onChange: row.getToggleSelectedHandler(),
       }),
     enableSorting: false,
-    size: 32,
+    size: 48,
   },
-  { accessorKey: "id", header: "ID" },
+  { accessorKey: "id", header: "ID", size: 80 },
   {
     accessorKey: "img",
     header: "Image",
     enableSorting: false,
-    size: 72,
+    size: 100,
     cell: ({ row }) =>
       h(TableImage, {
         src: row.original.img,
@@ -112,6 +112,7 @@ const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "userName",
+    size: 160,
     header: "Name",
     cell: ({ row }) =>
       h(UserNameWithTooltip, {
@@ -120,18 +121,22 @@ const columns: ColumnDef<User>[] = [
         email: row.original.email,
       }),
   },
-  { accessorKey: "email", header: "Email" },
+  { accessorKey: "email", header: "Email", size: 200 },
+  { accessorKey: "address", header: "address", size: 200 },
+  { accessorKey: "phone", header: "phone", size: 200 },
+  { accessorKey: "status", header: "status", size: 200 },
+  { accessorKey: "country", header: "country", size: 200 },
+  { accessorKey: "company", header: "company", size: 250 },
   {
     id: "actions",
     header: "Edit",
     enableSorting: false,
-    size: 64,
+    size: 110,
     cell: ({ row }) =>
       h(
         Button,
         {
           size: "sm",
-          class: "rounded-sm",
           onClick: () => editUser(row.original),
         },
         {
@@ -170,7 +175,9 @@ function editUser(user: User) {
 }
 
 function handleEditUser(data: User) {
-  rows.value = rows.value.map((row) => (row.id === data.id ? data : row));
+  rows.value = rows.value.map((row) =>
+    row.id === data.id ? { ...row, ...data } : row
+  );
   isEditOpen.value = false;
   userDataEdit.value = null;
 }
@@ -243,7 +250,7 @@ function prev() {
 
 <template>
   <div>
-    <TableBaseTable :table="table">
+    <TableBaseGridTable :table="table">
       <template #header>
         <div>
           <div>
@@ -253,7 +260,7 @@ function prev() {
         </div>
       </template>
       <template #footer> In total there are {{ totalItems }} users. </template>
-    </TableBaseTable>
+    </TableBaseGridTable>
 
     <!-- FOOTER ACTIONS -->
     <div class="flex items-center justify-between mt-3">

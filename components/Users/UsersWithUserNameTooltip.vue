@@ -27,9 +27,10 @@ defineProps<{
           />
         </TooltipTrigger>
         <TooltipContent
-          class="tooltip-username bg-neutral-300 text-black shadow"
+          class="tooltip-username max-w-[200px] bg-neutral-300 text-black shadow spaye-y-1"
         >
           <div>ID: {{ id }}</div>
+          <div>UserName: {{ userName }}</div>
           <div>Email: {{ email }}</div>
         </TooltipContent>
       </Tooltip>
