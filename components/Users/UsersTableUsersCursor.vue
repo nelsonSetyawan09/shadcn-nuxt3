@@ -9,6 +9,7 @@ import TableImage from "../features/table/TableImage.vue";
 import { Pencil } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import type { User } from "@/types/user";
+import { sortingToQuery, queryToSorting } from "@/utils/tanstack-table";
 
 /* =====================
  * ROUTER
@@ -20,7 +21,10 @@ const router = useRouter();
  * STATE
  * ===================== */
 const rows = ref<User[]>([]);
-const sorting = ref<SortingState>([]);
+const sorting = ref<SortingState>(
+  queryToSorting(route.query.sort as string | undefined)
+);
+const totalItems = ref<number>(0);
 const loading = ref(false);
 const rowSelection = ref({});
 
@@ -29,6 +33,21 @@ const isEditOpen = ref(false);
 
 const nextCursor = ref<number | null>(null);
 const prevCursor = ref<number | null>(null);
+
+const pageSize = computed<number>({
+  get() {
+    return Number(route.query.limit ?? 10);
+  },
+  set(value) {
+    router.push({
+      query: {
+        ...route.query,
+        limit: value,
+        cursor: undefined, // reset cursor saat limit berubah
+      },
+    });
+  },
+});
 
 /* =====================
  * CURSOR FROM URL
@@ -58,7 +77,14 @@ const columns: ColumnDef<User>[] = [
         type: "checkbox",
         class: "cursor-pointer",
         checked: table.getIsAllPageRowsSelected(),
-        indeterminate: table.getIsSomePageRowsSelected(),
+        onVnodeMounted(vnode) {
+          (vnode.el as HTMLInputElement).indeterminate =
+            table.getIsSomePageRowsSelected();
+        },
+        onVnodeUpdated(vnode) {
+          (vnode.el as HTMLInputElement).indeterminate =
+            table.getIsSomePageRowsSelected();
+        },
         onChange: table.getToggleAllPageRowsSelectedHandler(),
       }),
     cell: ({ row }) =>
@@ -116,6 +142,7 @@ const columns: ColumnDef<User>[] = [
 ];
 
 const selectedRows = computed(() => {
+  if (!table) return [];
   return table.getSelectedRowModel().rows.map((row) => row.original);
 });
 
@@ -128,7 +155,13 @@ function onSortingChange(
   sorting.value =
     typeof updater === "function" ? updater(sorting.value) : updater;
 
-  cursor.value = 0;
+  router.push({
+    query: {
+      ...route.query,
+      sort: sortingToQuery(sorting.value),
+      cursor: undefined, // reset cursor
+    },
+  });
 }
 
 function editUser(user: User) {
@@ -169,14 +202,17 @@ async function fetchData() {
     data: User[];
     nextCursor: number | null;
     prevCursor: number | null;
+    totalItems: number | 0;
   }>("/api/users/cursor", {
     query: {
       cursor: cursor.value,
-      sort: JSON.stringify(sorting.value),
+      sort: sortingToQuery(sorting.value),
+      limit: pageSize.value,
     },
   });
 
   rows.value = res.data;
+  totalItems.value = res.totalItems;
   nextCursor.value = res.nextCursor;
   prevCursor.value = res.prevCursor;
 
@@ -184,12 +220,14 @@ async function fetchData() {
 }
 
 // 1. Fetch data
-watch(() => [cursor.value, sorting.value], fetchData, { immediate: true });
-
-// 2. Reset selection
-watch([cursor, sorting], () => {
-  rowSelection.value = {};
-});
+watch(
+  () => [cursor.value, pageSize.value, sortingToQuery(sorting.value)],
+  () => {
+    rowSelection.value = {};
+    fetchData();
+  },
+  { immediate: true }
+);
 
 /* =====================
  * ACTIONS
@@ -214,16 +252,34 @@ function prev() {
           </div>
         </div>
       </template>
-      <template #footer> In total there are {{ rows.length }} users. </template>
+      <template #footer> In total there are {{ totalItems }} users. </template>
     </TableBaseTable>
 
-    <TablePaging
-      :has-prev="prevCursor !== null"
-      :has-next="nextCursor !== null"
-      :loading="loading"
-      @prev="prev"
-      @next="next"
-    />
+    <!-- FOOTER ACTIONS -->
+    <div class="flex items-center justify-between mt-3">
+      <!-- LEFT: ROWS OPTION -->
+      <div class="flex items-center gap-2 text-sm">
+        <span>Rows:</span>
+        <select
+          v-model.number="pageSize"
+          class="border rounded px-2 py-1 text-sm cursor-pointer"
+        >
+          <option :value="10">10</option>
+          <option :value="25">25</option>
+          <option :value="50">50</option>
+          <option :value="100">100</option>
+        </select>
+      </div>
+
+      <!-- RIGHT: PAGINATION -->
+      <TablePaging
+        :has-prev="prevCursor !== null"
+        :has-next="nextCursor !== null"
+        :loading="loading"
+        @prev="prev"
+        @next="next"
+      />
+    </div>
 
     <UsersEditUserDialog
       :user-data="userDataEdit"
