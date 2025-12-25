@@ -15,3 +15,20 @@ export function queryToSorting(sort?: string): SortingState {
 
   return [{ id, desc: dir === "desc" }];
 }
+
+export function getRandom(items: string[]) {
+  const index = Math.floor(Math.random() * items.length);
+  return items[index];
+}
+
+export function randomPhone13(): string {
+  const prefix = "08"; // 2 digit
+  const remainingLength = 13 - prefix.length; // 11 digit
+
+  let rest = "";
+  for (let i = 0; i < remainingLength; i++) {
+    rest += Math.floor(Math.random() * 10);
+  }
+
+  return prefix + rest;
+}
