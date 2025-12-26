@@ -21,9 +21,6 @@ const router = useRouter();
  * STATE
  * ===================== */
 const rows = ref<User[]>([]);
-const sorting = ref<SortingState>(
-  queryToSorting(route.query.sort as string | undefined)
-);
 const totalItems = ref<number>(0);
 const loading = ref(false);
 const rowSelection = ref({});
@@ -33,6 +30,7 @@ const isEditOpen = ref(false);
 
 const nextCursor = ref<number | null>(null);
 const prevCursor = ref<number | null>(null);
+const pageSizeOptions = [5, 10, 25, 50, 100] as const;
 
 const pageSize = computed<number>({
   get() {
@@ -61,6 +59,21 @@ const cursor = computed<number>({
       query: {
         ...route.query,
         cursor: value || undefined,
+      },
+    });
+  },
+});
+
+const sorting = computed<SortingState>({
+  get() {
+    return queryToSorting(route.query.sort as string | undefined);
+  },
+  set(value) {
+    router.push({
+      query: {
+        ...route.query,
+        sort: sortingToQuery(value),
+        cursor: undefined, // reset cursor saat sort berubah
       },
     });
   },
@@ -129,7 +142,7 @@ const columns: ColumnDef<User>[] = [
   { accessorKey: "company", header: "company", size: 250 },
   {
     id: "actions",
-    header: "Edit",
+    header: "Actions",
     enableSorting: false,
     size: 110,
     cell: ({ row }) =>
@@ -137,7 +150,7 @@ const columns: ColumnDef<User>[] = [
         Button,
         {
           size: "sm",
-          onClick: () => editUser(row.original),
+          onClick: () => handleShowEditUserDialog(row.original),
         },
         {
           default: () => [h(Pencil, { size: 14 }), "Edit"],
@@ -157,19 +170,12 @@ const selectedRows = computed(() => {
 function onSortingChange(
   updater: SortingState | ((old: SortingState) => SortingState)
 ) {
-  sorting.value =
-    typeof updater === "function" ? updater(sorting.value) : updater;
+  const next = typeof updater === "function" ? updater(sorting.value) : updater;
 
-  router.push({
-    query: {
-      ...route.query,
-      sort: sortingToQuery(sorting.value),
-      cursor: undefined, // reset cursor
-    },
-  });
+  sorting.value = next;
 }
 
-function editUser(user: User) {
+function handleShowEditUserDialog(user: User) {
   userDataEdit.value = { ...user };
   isEditOpen.value = true;
 }
@@ -228,7 +234,7 @@ async function fetchData() {
 
 // 1. Fetch data
 watch(
-  () => [cursor.value, pageSize.value, sortingToQuery(sorting.value)],
+  () => [cursor.value, pageSize.value, sorting.value],
   () => {
     rowSelection.value = {};
     fetchData();
@@ -251,7 +257,7 @@ function prev() {
 <template>
   <div>
     <TableBaseGridTable :table="table">
-      <template #header>
+      <!-- <template #header>
         <div>
           <div>
             <h2 class="text-lg font-semibold">Users</h2>
@@ -259,7 +265,7 @@ function prev() {
           </div>
         </div>
       </template>
-      <template #footer> In total there are {{ totalItems }} users. </template>
+      <template #footer> In total there are {{ totalItems }} users. </template> -->
     </TableBaseGridTable>
 
     <!-- FOOTER ACTIONS -->
@@ -267,15 +273,20 @@ function prev() {
       <!-- LEFT: ROWS OPTION -->
       <div class="flex items-center gap-2 text-sm">
         <span>Rows:</span>
-        <select
-          v-model.number="pageSize"
-          class="border rounded px-2 py-1 text-sm cursor-pointer"
-        >
-          <option :value="10">10</option>
-          <option :value="25">25</option>
-          <option :value="50">50</option>
-          <option :value="100">100</option>
-        </select>
+        <SV-Select v-model="pageSize">
+          <SV-SelectTrigger class="border-neutral-300">
+            <SV-SelectValue placeholder="SV-Select a fruit" />
+          </SV-SelectTrigger>
+          <SV-SelectContent>
+            <SV-SelectItem
+              v-for="(pageSize, idx) in pageSizeOptions"
+              :key="idx"
+              :value="pageSize"
+            >
+              {{ pageSize }}
+            </SV-SelectItem>
+          </SV-SelectContent>
+        </SV-Select>
       </div>
 
       <!-- RIGHT: PAGINATION -->
