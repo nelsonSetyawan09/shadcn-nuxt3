@@ -1,3 +1,4 @@
+// utils/tanstack-table.ts
 import type { SortingState } from "@tanstack/vue-table";
 
 export function sortingToQuery(sorting: SortingState): string | undefined {
