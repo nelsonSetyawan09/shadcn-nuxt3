@@ -4,12 +4,13 @@ import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "#imports";
 import type { ColumnDef, SortingState } from "@tanstack/vue-table";
 import { useTanstackTable } from "@/composables/useTanStackTable";
+import { useTableQuery } from "@/composables/useTableQuery";
 import UserNameWithTooltip from "./UsersWithUserNameTooltip.vue";
 import TableImage from "../features/table/TableImage.vue";
 import { Pencil } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import type { User } from "@/types/user";
-import { sortingToQuery, queryToSorting } from "@/utils/tanstack-table";
+import { sortingToQuery } from "@/utils/tanstack-table";
 
 /* =====================
  * ROUTER
@@ -32,52 +33,7 @@ const nextCursor = ref<number | null>(null);
 const prevCursor = ref<number | null>(null);
 const pageSizeOptions = [5, 10, 25, 50, 100] as const;
 
-const pageSize = computed<number>({
-  get() {
-    return Number(route.query.limit ?? 10);
-  },
-  set(value) {
-    router.push({
-      query: {
-        ...route.query,
-        limit: value,
-        cursor: undefined, // reset cursor saat limit berubah
-      },
-    });
-  },
-});
-
-/* =====================
- * CURSOR FROM URL
- * ===================== */
-const cursor = computed<number>({
-  get() {
-    return Number(route.query.cursor ?? 0);
-  },
-  set(value) {
-    router.push({
-      query: {
-        ...route.query,
-        cursor: value || undefined,
-      },
-    });
-  },
-});
-
-const sorting = computed<SortingState>({
-  get() {
-    return queryToSorting(route.query.sort as string | undefined);
-  },
-  set(value) {
-    router.push({
-      query: {
-        ...route.query,
-        sort: sortingToQuery(value),
-        cursor: undefined, // reset cursor saat sort berubah
-      },
-    });
-  },
-});
+const { pageSize, cursor, sorting } = useTableQuery(10);
 
 /* =====================
  * COLUMNS
@@ -159,6 +115,23 @@ const columns: ColumnDef<User>[] = [
   },
 ];
 
+/* =====================
+ * TABLE INSTANCE
+ * ===================== */
+const table = useTanstackTable<User>({
+  data: rows,
+  columns,
+
+  sorting,
+  onSortingChange,
+
+  rowSelection,
+  onRowSelectionChange: (updater) => {
+    rowSelection.value =
+      typeof updater === "function" ? updater(rowSelection.value) : updater;
+  },
+});
+
 const selectedRows = computed(() => {
   if (!table) return [];
   return table.getSelectedRowModel().rows.map((row) => row.original);
@@ -188,22 +161,13 @@ function handleEditUser(data: User) {
   userDataEdit.value = null;
 }
 
-/* =====================
- * TABLE INSTANCE
- * ===================== */
-const table = useTanstackTable<User>({
-  data: rows,
-  columns,
+function next() {
+  if (nextCursor.value !== null) cursor.value = nextCursor.value;
+}
 
-  sorting,
-  onSortingChange,
-
-  rowSelection,
-  onRowSelectionChange: (updater) => {
-    rowSelection.value =
-      typeof updater === "function" ? updater(rowSelection.value) : updater;
-  },
-});
+function prev() {
+  if (prevCursor.value !== null) cursor.value = prevCursor.value;
+}
 
 /* =====================
  * FETCH
@@ -241,17 +205,6 @@ watch(
   },
   { immediate: true }
 );
-
-/* =====================
- * ACTIONS
- * ===================== */
-function next() {
-  if (nextCursor.value !== null) cursor.value = nextCursor.value;
-}
-
-function prev() {
-  if (prevCursor.value !== null) cursor.value = prevCursor.value;
-}
 </script>
 
 <template>
