@@ -1,9 +1,10 @@
 <!-- components/features/table/TableBaseGridTable -->
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import type { Table } from "@tanstack/vue-table";
 import { FlexRender } from "@tanstack/vue-table";
 import { computeGridColumns } from "@/utils/computeGridColumns";
+import type { CSSProperties } from "vue";
 
 const props = defineProps<{ table: Table<any> }>();
 
@@ -33,6 +34,55 @@ const gridTemplateColumns = computed(() => {
   const sizes = computeGridColumns(props.table, containerWidth.value);
   return sizes.map((w) => `${w}px`).join(" ");
 });
+
+const totalTableWidth = computed(() => {
+  return `${props.table.getTotalSize()}px`;
+});
+
+function getStickyBackground(type: "header" | "body") {
+  return type === "header" ? "#e5e7eb" : "white";
+}
+
+function getStickyStyle(
+  table: Table<any>,
+  columnId: string,
+  type: "header" | "body"
+): CSSProperties {
+  const column = table.getColumn(columnId);
+  const sticky = column?.columnDef.meta?.sticky;
+
+  if (!sticky) return {};
+  const backgroundColor = getStickyBackground(type);
+
+  if (sticky === "left") {
+    let left = 0;
+
+    for (const col of table.getVisibleLeafColumns()) {
+      if (col.id === columnId) break;
+      left += col.getSize();
+    }
+
+    return {
+      position: "sticky",
+      left: `${left}px`,
+      zIndex: 3,
+      backgroundColor,
+      boxShadow: "2px 0 4px rgba(0,0,0,.08)",
+    };
+  }
+
+  if (sticky === "right") {
+    return {
+      position: "sticky",
+      right: "0px",
+      zIndex: 3,
+      backgroundColor,
+      boxShadow: "-2px 0 4px rgba(0,0,0,.08)",
+    };
+  }
+
+  return {};
+}
 </script>
 
 <template>
@@ -45,11 +95,18 @@ const gridTemplateColumns = computed(() => {
     <!-- GRID TABLE -->
     <div ref="wrapperRef" class="relative overflow-x-auto">
       <!-- THEAD -->
-      <div class="grid sticky top-0 z-10" :style="{ gridTemplateColumns }">
+      <div
+        class="grid sticky top-0 z-10"
+        :style="{
+          gridTemplateColumns,
+          minWidth: totalTableWidth,
+        }"
+      >
         <div
           v-for="header in table.getFlatHeaders()"
           :key="header.id"
-          class="px-4 py-3 font-semibold bg-gray-100 border-b border-gray-300 border-r last:border-r-0"
+          class="px-4 py-3 font-semibold bg-gray-200 border-b border-gray-300 border-r last:border-r-0"
+          :style="getStickyStyle(table, header.column.id, 'header')"
           :class="{
             'cursor-pointer select-none': header.column.getCanSort(),
           }"
@@ -75,12 +132,16 @@ const gridTemplateColumns = computed(() => {
         v-for="row in table.getRowModel().rows"
         :key="row.id"
         class="grid"
-        :style="{ gridTemplateColumns }"
+        :style="{
+          gridTemplateColumns,
+          minWidth: totalTableWidth,
+        }"
       >
         <div
           v-for="cell in row.getVisibleCells()"
           :key="cell.id"
           class="px-4 py-3 break-words whitespace-normal border-b border-gray-200 border-r last:border-r-0"
+          :style="getStickyStyle(table, cell.column.id, 'body')"
           :class="{
             'flex justify-center items-center whitespace-nowrap':
               cell.column.id === 'actions',
