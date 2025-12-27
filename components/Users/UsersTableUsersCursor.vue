@@ -66,8 +66,9 @@ const columns: ColumnDef<User>[] = [
       }),
     enableSorting: false,
     size: 48,
+    meta: { sticky: "left" },
   },
-  { accessorKey: "id", header: "ID", size: 80 },
+  { accessorKey: "id", header: "ID", size: 80, meta: { sticky: "left" } },
   {
     accessorKey: "img",
     header: "Image",
@@ -112,6 +113,7 @@ const columns: ColumnDef<User>[] = [
           default: () => [h(Pencil, { size: 14 }), "Edit"],
         }
       ),
+    meta: { sticky: "right" },
   },
 ];
 
