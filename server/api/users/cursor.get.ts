@@ -2,7 +2,9 @@
 import { USERS } from "@/utils/mockUsers";
 import { getQuery } from "h3";
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   const query = getQuery(event);
 
   /* =====================

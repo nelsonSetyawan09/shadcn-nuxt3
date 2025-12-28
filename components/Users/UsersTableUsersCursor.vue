@@ -211,7 +211,11 @@ watch(
 
 <template>
   <div>
-    <TableBaseGridTable :table="table">
+    <TableBaseGridTable
+      :table="table"
+      :loading="loading"
+      empty-text="No users found"
+    >
       <!-- <template #header>
         <div>
           <div>
