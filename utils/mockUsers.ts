@@ -3,7 +3,7 @@ import type { User } from "@/types/user";
 import { getRandom, randomPhone13 } from "./tanstack-table";
 import { IMAGES, MEMBER_STATUSES, COUNTRIES, COMPANIES } from "./dummyUsers";
 
-export const USERS: User[] = Array.from({ length: 1000 }, (_, i) => ({
+export const USERS: User[] = Array.from({ length: 90 }, (_, i) => ({
   id: i + 1,
   userName: `User ${i + 1}`,
   email: `user${i + 1}@mail.com`,
