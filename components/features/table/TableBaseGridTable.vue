@@ -10,6 +10,7 @@ const props = defineProps<{
   table: Table<any>;
   loading?: boolean;
   emptyText?: string;
+  height?: string | number;
 }>();
 
 /* ================= WIDTH OBSERVER (ResizeObserver) ================= */
@@ -40,10 +41,6 @@ onMounted(() => {
 const isReady = computed(() => containerWidth.value > 0);
 const emptyMessage = computed(() => props.emptyText ?? "No data available");
 const hasRows = computed(() => props.table.getRowModel().rows.length > 0);
-const loadingHeight = computed(() => {
-  const h = wrapperHeight.value - theadHeight.value;
-  return h > 0 ? `${h}px` : "0px";
-});
 
 /* ================= GRID TEMPLATE ================= */
 const gridTemplateColumns = computed(() => {
@@ -54,6 +51,11 @@ const gridTemplateColumns = computed(() => {
 
 const totalTableWidth = computed(() => {
   return `${props.table.getTotalSize()}px`;
+});
+
+const tableHeight = computed(() => {
+  if (!props.height) return "auto";
+  return typeof props.height === "number" ? `${props.height}px` : props.height;
 });
 
 function getStickyBackground(type: "header" | "body") {
@@ -117,18 +119,23 @@ function getStickyStyle(
       <div class="flex items-center gap-2 text-md text-gray-600 font-semibold">
         <span
           class="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent"
-        />
-        Loading...
+        >
+        </span>
+
+        <span> Loading...</span>
       </div>
     </div>
 
     <!-- GRID TABLE -->
-    <div ref="wrapperRef" class="relative overflow-x-auto">
+    <div
+      ref="wrapperRef"
+      class="relative overflow-x-auto"
+      :style="{ height: tableHeight }"
+    >
       <template v-if="isReady">
         <!-- THEAD -->
         <div
-          ref=""
-          theadRef
+          ref="theadRef"
           class="grid sticky top-0 z-10"
           :style="{
             gridTemplateColumns,

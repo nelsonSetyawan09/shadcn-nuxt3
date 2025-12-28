@@ -214,6 +214,7 @@ watch(
     <TableBaseGridTable
       :table="table"
       :loading="loading"
+      height="500px"
       empty-text="No users found"
     >
       <!-- <template #header>
