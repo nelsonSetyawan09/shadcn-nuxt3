@@ -13,7 +13,7 @@
       />
       <div
         v-if="open"
-        class="absolute z-90 bg-red-200 top-0 left-0 w-full h-screen"
+        class="absolute z-90 bg-neutral-100 top-0 left-0 w-full h-screen"
       >
         <Icon
           icon="maki:cross"

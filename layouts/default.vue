@@ -15,7 +15,7 @@
             {{ firstPath === "" ? "Home" : firstPath }}
           </h1>
           <div class="flex justify-end font-semibold">
-            <span>Welcome, Citra!!</span>
+            <span>Welcome, Nelson!!!</span>
           </div>
         </div>
 
@@ -28,6 +28,12 @@
 </template>
 
 <script setup>
+const { title } = useMenuTitle();
+
+useHead({
+  title,
+  titleTemplate: (t) => (t ? `${t} · Nuxt Finance` : "Nuxt Finance"),
+});
 const route = useRoute();
 
 const firstPath = computed(() => route.path.split("/")[1]);
