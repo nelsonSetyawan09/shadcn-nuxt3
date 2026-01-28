@@ -1,33 +1,25 @@
 import type { MenuItem } from "@/types/menu";
 export const MENU_ITEMS: MenuItem[] = [
   {
-    title: "Overview",
-    path: "/overview",
+    title: "Card Member",
+    path: "/card-member",
     icon: "material-symbols-light:dashboard-rounded",
   },
   {
-    title: "Transactions",
-    path: "/transactions",
+    title: "Virtual Scroll",
+    path: "/virtual-scroll",
     icon: "grommet-icons:transaction",
   },
+
   {
-    title: "Account",
-    path: "/account",
-    icon: "mdi:account-box",
-  },
-  {
-    title: "Contacts",
-    path: "/contacts",
+    title: "Form User",
+    path: "/form-user",
     icon: "mingcute:contacts-2-fill",
   },
+
   {
-    title: "Settings",
-    path: "/settings",
-    icon: "material-symbols:settings-rounded",
-  },
-  {
-    title: "Users",
-    path: "/users",
+    title: "Users Table",
+    path: "/users-table",
     icon: "majesticons:users",
   },
 ] as const;
