@@ -14,7 +14,8 @@
           <h1 class="text-3xl font-semibold capitalize">
             {{ firstPath === "" ? "Home" : firstPath }}
           </h1>
-          <div class="flex justify-end font-semibold">
+          <div class="flex justify-end items-center gap-2 font-semibold">
+            <NotificationBell />
             <span>Welcome, Nelson!!!</span>
           </div>
         </div>
